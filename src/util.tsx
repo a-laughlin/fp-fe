@@ -1,4 +1,4 @@
-import {ComponentProps, createElement, isValidElement as isElem,JSXElementConstructor, ComponentPropsWithRef, useEffect, useState, useRef, ChangeEventHandler, ReactElement, FunctionComponent} from "react"
+import {ComponentProps, createElement, isValidElement as isElem,JSXElementConstructor, ComponentPropsWithRef, useEffect, useState, useRef, ChangeEventHandler, ReactElement, FunctionComponent, ReactNode} from "react"
 
 // lodash-es version of flow works fine to 7 fns, then types break after.  This works up to 20 for more complex components.
 export const flow = function<A extends ReadonlyArray<unknown>, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T,>(
@@ -135,10 +135,6 @@ export const mapProps =
       }
 
 
-
-
-
-
 // Events: Partial list from https://reactjs.org/docs/events.html#supported-events. Add others as needed.
 /* c8 ignore next 40 */
 export const onKeyDown = mapValue('onKeyDown');
@@ -182,30 +178,29 @@ export const onAnimationEnd = mapValue('onAnimationEnd');
 export const onAnimationIteration = mapValue('onAnimationIteration');
 export const onTransitionEnd = mapValue('onTransitionEnd');
 
-
 // Values
 export const checked = mapThunk('checked');
 /**
  * children: add children prop to component - supports values and functions.
  */
 const childrenThunk = mapThunk('children');
-const childrenValue = mapValue('children');
-export const children = <C extends ComponentProps<'div'>['children'],V extends C|C[]|(()=>C)>(v:V)=>
-  ((typeof v === 'function' ? childrenThunk(v) : childrenValue(v)) as <
+export const children = <N extends ReactNode|ReactNode[],FN extends ()=>ReactNode|ReactNode[]>(...v:(N|FN)[]) =>
+  // use thunk so that hook values can be children
+  childrenThunk(()=>v.flatMap((child)=>typeof child === 'function' ? child():child)) as <
     P extends {children?:unknown}
-  >(props:P) => {[k in keyof P | 'children']:k extends 'children' ? V extends (()=>C) ? ReturnType<V> : V :P[k]});
+  >(props:P) => {[k in keyof P | 'children']:k extends 'children' ? ReactNode[] : P[k]}
+  
 export const className = mapThunk('className');
 export const id = mapThunk('id');
 export const title = mapThunk('title');
 export const value = mapThunk('value');
 
-// component value selectors
+// Element Property Value selectors
 export const fromEventValue = ({target:{value}}:{target:{value:string}})=>value;
 export const fromEventKey = ({key}:{key:string})=>key;
-
 
 // Elements
 export const Input = flowProps('input');
 export const Div = flowProps('div');
 export const Button = flowProps('button');
-export const Span = flowProps('button');
+export const Span = flowProps('span');
