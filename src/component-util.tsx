@@ -186,13 +186,14 @@ export const checked = mapThunk('checked');
 const childrenThunk = mapThunk('children');
 export const children = <N extends ReactNode|ReactNode[],FN extends ()=>ReactNode|ReactNode[]>(...v:(N|FN)[]) =>
   // use thunk so that hook values can be children
-  childrenThunk(()=>v.flatMap((child)=>typeof child === 'function' ? child():child)) as <
+  childrenThunk(()=>v.flatMap(child => typeof child === 'function' ? child() : child)) as <
     P extends {children?:unknown}
   >(props:P) => {[k in keyof P | 'children']:k extends 'children' ? ReactNode[] : P[k]}
   
 export const className = mapThunk('className');
 export const id = mapThunk('id');
 export const title = mapThunk('title');
+export const style = mapThunk('style');
 export const value = mapThunk('value');
 
 // Element Property Value selectors
