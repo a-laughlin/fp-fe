@@ -1,43 +1,43 @@
-import { useState } from 'react'
+import { ComponentProps, useCallback } from 'react'
 import reactLogo from './assets/react.svg'
 import {useFoo, toFoo, useCount, toCount, fromCount } from "./datagraph";
-import {value, onChange, children, flow, fromEventValue, onClick, Input, Div, Button, Span } from "./component-util";
+import {value, onChange, children, flow, fromEventValue, onClick, Input, Button, Span } from "./component-util";
 import './App.css'
 
 
 // Count JSX
 const CountJSX = ()=>{
-  const [count, setCount] = useState(0);
+  const onClick: NonNullable<ComponentProps<'button'>['onClick']> =
+    useCallback(() => toCount(fromCount() + 1), []);
+  
   return (
-    <button onClick={() => setCount((count) => count + 1)}>
-      jsx count is {count}
+    <button onClick={onClick}>
+      count is {useCount()}
     </button>
   );
-}
+};
 
 // Count FP
 export const CountFP = Button(
   onClick(flow( fromCount, x => x+1, toCount )),
-  children('fp count is ', useCount)
+  children('count is ', useCount)
 );
 
 
 
 // Input JSX
-const InputJSX = ({value, setValue}: {value: string, setValue: (v: string) => void }) =>
-  <input value={value} onChange={e => setValue(e.target.value) }/>;
-
-const DisplayJSX = ({value}: {value: string}) => <span>{value}</span>;
-
-const StateWrapperJSX = () => {
-  const [val, setVal] = useState('foo');
+const InputJSX = () => {
+  const onChange: NonNullable<ComponentProps<'input'>['onChange']> =
+    useCallback(e => toFoo(e.target.value),[]);
+  
   return (
-    <>
-      <InputJSX value={val} setValue={setVal} />&nbsp;
-      <DisplayJSX value={val} />
-    </>
-  )
+    <input
+      value={useFoo()}
+      onChange={onChange}
+    />
+  );
 };
+const DisplayJSX = () => <span>{useFoo()}</span>;
 
 // Input FP
 const InputFP = Input(
@@ -61,10 +61,11 @@ export const App = ()=>
     <h1>Vite + React</h1>
     <div className="card">
       <h3>Count Buttons</h3>
-      <p><CountJSX /> <CountFP/></p>
+      <p>JSX <CountJSX /></p>
+      <p>FP <CountFP/></p>
       <h3>Inputs</h3>
-      <p><StateWrapperJSX/></p>
-      <p><InputFP /> <DisplayFP /></p>
+      <p>JSX <InputJSX /> <DisplayJSX /></p>
+      <p>FP <InputFP /> <DisplayFP /></p>
       <p>
         Edit <code>src/App.tsx</code> and save to test HMR
       </p>
