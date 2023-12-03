@@ -9,7 +9,8 @@ import './App.css'
 const CountJSX = ()=>{
   const onClick: NonNullable<ComponentProps<'button'>['onClick']> =
     useCallback(() => toCount(fromCount() + 1), []);
-  
+
+
   return (
     <button onClick={onClick}>
       count is {useCount()}
@@ -29,7 +30,7 @@ export const CountFP = Button(
 const InputJSX = () => {
   const onChange: NonNullable<ComponentProps<'input'>['onChange']> =
     useCallback(e => toFoo(e.target.value),[]);
-  
+
   return (
     <input
       value={useFoo()}

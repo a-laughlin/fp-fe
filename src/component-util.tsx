@@ -189,7 +189,7 @@ export const children = <N extends ReactNode|ReactNode[],FN extends ()=>ReactNod
   childrenThunk(()=>v.flatMap(child => typeof child === 'function' ? child() : child)) as <
     P extends {children?:unknown}
   >(props:P) => {[k in keyof P | 'children']:k extends 'children' ? ReactNode[] : P[k]}
-  
+
 export const className = mapThunk('className');
 export const id = mapThunk('id');
 export const title = mapThunk('title');
